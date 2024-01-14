@@ -9,6 +9,8 @@ from constants import LOCAL_DIR
 from core.cvrp import get_task, get_solution
 from tqdm import tqdm
 
+from core.cvrp_alns import custom_alns_solver
+
 
 def run_all(solver, path):
     history = {}
@@ -41,8 +43,11 @@ def save_history(history, path):
 
 
 from core.alns_solver import alns_solver
-for task_type in ['E']:
-    hist = run_all(alns_solver, os.path.join(LOCAL_DIR, "resources", task_type))
-    # save_history(hist, os.path.join(LOCAL_DIR, "resources", f"result_{task_type}.json"))
+for task_type in ['A', 'B', 'E']:
+    # best =
+    # hist = run_all(alns_solver, os.path.join(LOCAL_DIR, "resources", task_type))
+    hist = run_all(custom_alns_solver, os.path.join(LOCAL_DIR, "resources", task_type))
 
-    plot_hist_of_errors(hist, task_type)
+    save_history(hist, os.path.join(LOCAL_DIR, "resources", f"result_custom_{task_type}.json"))
+
+    # plot_hist_of_errors(hist, task_type)

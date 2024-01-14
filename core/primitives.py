@@ -1,3 +1,5 @@
+import copy
+
 import numpy as np
 
 from vrp_io.reader import read_vrp, read_solution
@@ -66,10 +68,28 @@ class SolutionData:
         self.from_dict(solution_dict)
 
 
-class Parameters:
+class CvrpSolutionState:
+    def __init__(self, distance, routes, unassigned=None):
+        self.distance = distance
+        self.routes = routes
+        self.unassigned = unassigned if unassigned is not None else []
 
-    def __init__(self):
-        self.number_generations = 100000
-        self.population_size = 800
-        self.mutation_proba = 0.15
-        self.crossingover_proba = 0.85
+    def copy(self):
+        return CvrpSolutionState(self.distance, copy.deepcopy(self.routes), self.unassigned.copy())
+
+    def route_cost(self, route):
+        tour = [0] + route + [0]
+        return sum(self.distance[tour[idx]][tour[idx + 1]] for idx in range(len(tour) - 1))
+
+    def find_route(self, customer):
+        for route in self.routes:
+            if customer in route:
+                return route
+        raise ValueError(f"Solution does not contain customer {customer}.")
+
+    def objective(self):
+        return sum(self.route_cost(route) for route in self.routes)
+
+    @property
+    def cost(self):
+        return self.objective()

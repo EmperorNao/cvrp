@@ -17,6 +17,6 @@ def plot_hist_of_errors(data, name):
     plt.show()
 
 
-# for task_type in ["A", "B", "E"]:
-#     plot_hist_of_errors(load(f"/home/emperornao/personal/cvrp/resources/result_{task_type}.json"), task_type)
+for task_type in ["A", "B", "E"]:
+    plot_hist_of_errors(load(f"/home/emperornao/personal/cvrp/resources/result_custom_{task_type}.json"), task_type)
 

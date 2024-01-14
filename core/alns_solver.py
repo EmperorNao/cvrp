@@ -64,52 +64,6 @@ def alns_solver(data):
     SEED = 42
     alns = ALNS(rnd.RandomState(SEED))
 
-    class CvrpState:
-        """
-        Solution state for CVRP. It has two data members, routes and unassigned.
-        Routes is a list of list of integers, where each inner list corresponds to
-        a single route denoting the sequence of customers to be visited. A route
-        does not contain the start and end depot. Unassigned is a list of integers,
-        each integer representing an unassigned customer.
-        """
-
-        def __init__(self, routes, unassigned=None):
-            self.routes = routes
-            self.unassigned = unassigned if unassigned is not None else []
-
-        def copy(self):
-            return CvrpState(copy.deepcopy(self.routes), self.unassigned.copy())
-
-        def objective(self):
-            """
-            Computes the total route costs.
-            """
-            return sum(route_cost(route) for route in self.routes)
-
-        @property
-        def cost(self):
-            """
-            Alias for objective method. Used for plotting.
-            """
-            return self.objective()
-
-        def find_route(self, customer):
-            """
-            Return the route that contains the passed-in customer.
-            """
-            for route in self.routes:
-                if customer in route:
-                    return route
-
-            raise ValueError(f"Solution does not contain customer {customer}.")
-
-    def route_cost(route):
-        distances = data["edge_weight"]
-        tour = [0] + route + [0]
-
-        return sum(distances[tour[idx]][tour[idx + 1]]
-                   for idx in range(len(tour) - 1))
-
     def random_removal(state, rnd_state):
         """
         Removes a number of randomly selected customers from the passed-in solution.
