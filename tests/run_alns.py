@@ -3,16 +3,14 @@ import json
 import glob
 
 import vrplib
-
-from analyzer import plot_hist_of_errors, load
 from constants import LOCAL_DIR
-from core.cvrp import get_task, get_solution
+from core.cvrp import get_solution
 from tqdm import tqdm
 
 from core.cvrp_alns import custom_alns_solver
 
 
-def run_all(solver, path):
+def run_alns(solver, path):
     history = {}
 
     tasks_path = glob.glob(os.path.join(path, '*' + ".vrp"))
@@ -20,9 +18,7 @@ def run_all(solver, path):
 
     for task_path, sol_path in tqdm(zip(sorted(tasks_path), sorted(sols_path))):
         task_name = task_path.rsplit("/", 1)[1].strip(".vrp")
-        task = get_task(task_path)
         data = vrplib.read_instance(task_path)
-        # data = task.data
         optimal = get_solution(sol_path).cost
         history[task_name] = {}
 
@@ -31,6 +27,7 @@ def run_all(solver, path):
 
         sol = solver(data)
 
+        history[task_name]['time'] = float(sol.get_time())
         history[task_name]['cost'] = float(sol.cost)
         history[task_name]['routes'] = [[int(vert) for vert in route] for route in sol.routes]
 
@@ -42,12 +39,6 @@ def save_history(history, path):
         json.dump(history, fp, indent=4)
 
 
-from core.alns_solver import alns_solver
 for task_type in ['A', 'B', 'E']:
-    # best =
-    # hist = run_all(alns_solver, os.path.join(LOCAL_DIR, "resources", task_type))
-    hist = run_all(custom_alns_solver, os.path.join(LOCAL_DIR, "resources", task_type))
-
-    save_history(hist, os.path.join(LOCAL_DIR, "resources", f"result_custom_{task_type}.json"))
-
-    # plot_hist_of_errors(hist, task_type)
+    hist = run_alns(custom_alns_solver, os.path.join(LOCAL_DIR, "resources", task_type))
+    save_history(hist, os.path.join(LOCAL_DIR, "resources", f"result_{task_type}_custom.json"))

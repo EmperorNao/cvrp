@@ -2,7 +2,7 @@ import copy
 import time
 from tqdm import tqdm
 from core.primitives import SolutionData, Task
-from core.algorithm import Node, Vehicle, AntsSimulator
+from core.cvrp_ants import Node, Vehicle, AntsSimulator
 
 
 def get_task(vrp_file):
@@ -14,7 +14,6 @@ def get_solution(sol_file):
     s = SolutionData()
     s.from_file(sol_file)
     return s
-
 
 
 def run_ants(task, params):
@@ -72,10 +71,3 @@ def run_tasks(tasks, params):
         history.append({"cost": cost, "time": end_task - start_task})
 
     return history
-
-
-
-
-
-
-

@@ -1,7 +1,4 @@
-import logging
 import time
-from typing import Dict, List, Optional, Protocol, Tuple
-
 import numpy as np
 
 from core.primitives import CvrpSolutionState
@@ -46,19 +43,14 @@ class CVRPALNS:
         return cand.cost - baseline.cost <= self.threshold_
 
     def nearest_neighbor(self, data):
-        """
-        Build a solution by iteratively constructing routes, where the nearest
-        customer is added until the route has met the vehicle capacity limit.
-        """
         routes = []
         unvisited = set(range(1, data["dimension"]))
 
         while unvisited:
-            route = [0]  # Start at the depot
+            route = [0]
             route_demands = 0
 
             while unvisited:
-                # Add the nearest unvisited customer to the route till max capacity
                 current = route[-1]
                 nearest = [nb for nb in self.neighbors(data, current) if nb in unvisited][0]
 
@@ -69,7 +61,7 @@ class CVRPALNS:
                 unvisited.remove(nearest)
                 route_demands += data["demand"][nearest]
 
-            customers = route[1:]  # Remove the depot
+            customers = route[1:]
             routes.append(customers)
 
         return CvrpSolutionState(data['edge_weight'], routes)
@@ -81,12 +73,10 @@ class CVRPALNS:
     def destroy_operator(self, data, state):
 
         def remove_string(route, cust, max_string_size):
-            # Find consecutive indices to remove that contain the customer
             size = np.random.randint(1, min(len(route), max_string_size) + 1)
             start = route.index(cust) - np.random.randint(size)
             idcs = [idx % len(route) for idx in range(start, start + size)]
 
-            # Remove indices in descending order
             removed_customers = []
             for idx in sorted(idcs, reverse=True):
                 removed_customers.append(route.pop(idx))
@@ -180,6 +170,7 @@ class CVRPALNS:
             cand = self.repair_operator(data, destroyed)
             best, curr = self.eval(best, curr, cand)
 
+        best.set_time(time.perf_counter() - self._start_runtime)
         return best
 
 

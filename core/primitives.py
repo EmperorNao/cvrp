@@ -73,6 +73,13 @@ class CvrpSolutionState:
         self.distance = distance
         self.routes = routes
         self.unassigned = unassigned if unassigned is not None else []
+        self.time = None
+
+    def set_time(self, time):
+        self.time = time
+
+    def get_time(self):
+        return self.time
 
     def copy(self):
         return CvrpSolutionState(self.distance, copy.deepcopy(self.routes), self.unassigned.copy())

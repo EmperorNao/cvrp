@@ -1,4 +1,5 @@
-numpy
-tqdm
-matplotlib
+numpy~=1.26.2
+tqdm~=4.66.1
+matplotlib~=3.8.2
 pandas
+vrplib~=1.3.0
